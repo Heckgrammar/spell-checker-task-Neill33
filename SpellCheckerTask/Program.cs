@@ -8,41 +8,40 @@ namespace SpellCheckerTask
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            string[] words = createDictionary();
-            //1. Take a user input of a word an check if it has been spelled correctly
+            string[] words = File.ReadAllLines("WordsFile.txt");
 
-            //2. Take a string of words as a user input and check they have all been spelled correctly
+            Console.Write("Enter a word or sentence: ");
+            string userInput = Console.ReadLine().ToLower();
+            string[] userWords = userInput.Split(' ');
 
-            //3.Create a spelling score based on the percentage of words spelled correctly
+            int correctCount = 0;
+            string incorrectWords = "";
 
-            //4.Create a new list of words that have been spelled incorrectly and save it in a new file
-
-            //Challenge - Hard task
-
-            //Try to work out which words the user is trying to spell by looking for similarities in
-            //the spelling and ask the user did they mean that.
-
-            //Add these suggested words to a spelling list that the user can save as a file to work on
-            //their own spelling
-
-
-
-        }
-        static string[] createDictionary()
-        {
-            using StreamReader words = new("WordsFile.txt");
-            int count = 0;
-            string[] dictionaryData = new string[178636];
-            while (!words.EndOfStream)
+            foreach (string word in userWords)
             {
-
-                dictionaryData[count] = words.ReadLine();
-                count++;
+                if (Array.Exists(words, w => w.ToLower() == word))
+                {
+                    correctCount++;
+                }
+                else
+                {
+                    incorrectWords += word + "\n";
+                }
             }
-            words.Close();
-            return dictionaryData;
+
+            double score = (double)correctCount / userWords.Length * 100;
+            Console.WriteLine("Spelling Score: " + score + "%");
+
+            if (incorrectWords.Length > 0)
+            {
+                Console.WriteLine("Misspelled words saved to 'MisspelledWords.txt'");
+                File.WriteAllText("MisspelledWords.txt", incorrectWords);
+            }
         }
     }
+
+
 }
+
